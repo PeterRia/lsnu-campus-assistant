@@ -1,0 +1,10 @@
+{
+  "example": "虚构运动记录",
+  "records": [
+    {"id":"sport-1","date":"2026-09-14","activity":"羽毛球","status":"completed","evidence":"user_confirmed","minutes":45},
+    {"id":"sport-2","date":"2026-09-16","activity":"慢跑","status":"completed","evidence":"user_confirmed","minutes":30},
+    {"id":"sport-3","date":"2026-09-19","activity":"羽毛球","status":"completed","evidence":"user_confirmed","minutes":60},
+    {"id":"sport-4","date":"2026-09-20","activity":"游泳","status":"booked","evidence":"booking","minutes":60},
+    {"id":"sport-5","date":"2026-09-20","activity":"健身","status":"attended","evidence":"checkin"}
+  ]
+}

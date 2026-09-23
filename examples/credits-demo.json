@@ -1,0 +1,9 @@
+{
+  "example": "虚构学分示例，不是乐师真实培养方案",
+  "requirements": [{"category": "专业必修", "credits": 10}, {"category": "选修", "credits": 4}],
+  "courses": [
+    {"course_code": "DEMO101", "credits": 3, "category": "专业必修", "passed": true, "recognized": true, "recognition_source": "用户提供的虚构培养方案"},
+    {"course_code": "DEMO101", "credits": 3, "category": "专业必修", "passed": true, "recognized": true, "recognition_source": "重复成绩记录，用于测试去重"},
+    {"course_code": "DEMO202", "credits": 2, "passed": true, "recognized": false}
+  ]
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "乐师校园助手"
+  short_description: "查乐师官方办事依据，规划海棠与苏稽校区日程，陪你完成试讲和学业复盘"
+  default_prompt: "请用 $lsnu-campus-assistant 查询本学期重修流程，说明适用对象、截止时间和官方来源。"

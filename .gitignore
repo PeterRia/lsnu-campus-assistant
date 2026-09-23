@@ -1,0 +1,13 @@
+__pycache__/
+*.py[cod]
+.venv/
+.DS_Store
+.cache/
+dist/
+private/
+outputs/
+*.ics
+*.log
+.env
+.env.*
+!.env.example
