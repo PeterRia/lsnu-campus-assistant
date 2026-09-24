@@ -18,8 +18,11 @@ import zipfile
 from datetime import datetime, timezone
 from pathlib import Path, PurePosixPath
 
-SKILL = "lsnu-campus-assistant"
-REPO = "PeterRia/lsnu-campus-assistant"
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import public_knowledge
+
+SKILL = "lsnu-compus-skill"
+REPO = "PeterRia/lsnu-compus-skill"
 MANIFEST_URL = f"https://raw.githubusercontent.com/{REPO}/main/release.json"
 PERMISSIONS = ["public-network", "public-cache-write"]
 MAX_ARCHIVE = 12 * 1024 * 1024
@@ -72,7 +75,7 @@ def check_url(url, *, manifest=False):
     if p.scheme != "https" or p.username or p.password or p.port not in (None, 443):
         raise ValueError("更新源必须使用可信 HTTPS 地址")
     if manifest:
-        if url != MANIFEST_URL:
+        if url not in {MANIFEST_URL, public_knowledge.SNAPSHOT_URL}:
             raise ValueError("更新清单不属于固定的可信仓库")
     elif not (
         (
@@ -93,7 +96,7 @@ class TrustedRedirect(urllib.request.HTTPRedirectHandler):
 def download(url, limit, *, manifest=False, etag=None):
     check_url(url, manifest=manifest)
     headers = {
-        "User-Agent": "lsnu-campus-assistant-updater/1",
+        "User-Agent": "lsnu-compus-skill-updater/1",
         "Accept": "application/json" if manifest else "application/octet-stream",
     }
     if etag:
@@ -269,7 +272,6 @@ def _update(payload, fetch=download):
         result["update_status"] = "permission_review_required"
     except (OSError, ValueError, KeyError, TypeError, zipfile.BadZipFile):
         result["update_status"] = "unavailable_using_local"
-    atomic_json(cache / "last-check.json", result)
     return result
 
 
@@ -281,7 +283,10 @@ def update(payload, fetch=download):
     cache.mkdir(parents=True, exist_ok=True)
     with (cache / ".update.lock").open("a") as lock:
         fcntl.flock(lock, fcntl.LOCK_EX)
-        return _update(payload, fetch)
+        result = _update(payload, fetch)
+        result["knowledge"] = public_knowledge.sync(cache, fetch)
+        atomic_json(cache / "last-check.json", result)
+        return result
 
 
 def rollback(payload):

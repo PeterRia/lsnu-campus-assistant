@@ -61,13 +61,13 @@ def package(output):
             rel = path.relative_to(ROOT).as_posix()
             hashes[rel] = hashlib.sha256(data).hexdigest()
             info = zipfile.ZipInfo(
-                "lsnu-campus-assistant/" + rel, date_time=(2026, 9, 23, 0, 0, 0)
+                "lsnu-compus-skill/" + rel, date_time=(2026, 9, 23, 0, 0, 0)
             )
             info.compress_type = zipfile.ZIP_DEFLATED
             info.external_attr = 0o644 << 16
             z.writestr(info, data)
         info = zipfile.ZipInfo(
-            "lsnu-campus-assistant/PACKAGE-SHA256.json",
+            "lsnu-compus-skill/PACKAGE-SHA256.json",
             date_time=(2026, 9, 23, 0, 0, 0),
         )
         info.compress_type = zipfile.ZIP_DEFLATED
@@ -90,14 +90,14 @@ def release(output, manifest_path):
 
     value = (ROOT / "VERSION").read_text().strip()
     version(value)
-    result = package(Path(output) / f"lsnu-campus-assistant-{value}.zip")
+    result = package(Path(output) / f"lsnu-compus-skill-{value}.zip")
     manifest = {
         "schema_version": 1,
-        "skill_id": "lsnu-campus-assistant",
+        "skill_id": "lsnu-compus-skill",
         "version": value,
         "python_min": "3.10",
         "permissions": PERMISSIONS,
-        "archive_url": f"https://github.com/{REPO}/releases/download/v{value}/lsnu-campus-assistant-{value}.zip",
+        "archive_url": f"https://github.com/{REPO}/releases/download/v{value}/lsnu-compus-skill-{value}.zip",
         "archive_sha256": result["sha256"],
     }
     Path(manifest_path).write_text(

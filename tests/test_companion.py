@@ -228,7 +228,7 @@ class BootstrapTests(unittest.TestCase):
         parent = Path("/tmp/synthetic-agent/skills/custom")
         self.assertEqual(
             companion.skill_destination(
-                parent / "lsnu-campus-assistant", Path("/tmp/data")
+                parent / "lsnu-compus-skill", Path("/tmp/data")
             ),
             (parent / "lsnu-personal-memory").resolve(),
         )
@@ -373,14 +373,14 @@ class UpdateTests(unittest.TestCase):
     def setUp(self):
         self.tempdir = tempfile.TemporaryDirectory(prefix="lsnu-update-test-")
         self.cache = Path(self.tempdir.name).resolve() / "cache"
-        self.archive = self.make_archive("1.2.0")
+        self.archive = self.make_archive("1.3.0")
         self.manifest = {
             "schema_version": 1,
             "skill_id": public_update.SKILL,
-            "version": "1.2.0",
+            "version": "1.3.0",
             "python_min": "3.10",
             "permissions": public_update.PERMISSIONS,
-            "archive_url": f"https://github.com/{public_update.REPO}/releases/download/v1.2.0/lsnu-campus-assistant-1.2.0.zip",
+            "archive_url": f"https://github.com/{public_update.REPO}/releases/download/v1.3.0/lsnu-compus-skill-1.3.0.zip",
             "archive_sha256": hashlib.sha256(self.archive).hexdigest(),
         }
         self.requests = []
@@ -419,12 +419,12 @@ class UpdateTests(unittest.TestCase):
         first = self.update()
         self.assertEqual(first["update_status"], "updated")
         self.assertEqual(
-            (Path(first["public_root"]) / "VERSION").read_text().strip(), "1.2.0"
+            (Path(first["public_root"]) / "VERSION").read_text().strip(), "1.3.0"
         )
         second = self.update()
         self.assertEqual(second["update_status"], "current")
-        self.assertEqual(self.requests[-1][1]["etag"], '"synthetic-etag"')
-        self.assertEqual(len(self.requests), 3)
+        self.assertEqual(self.requests[-2][1]["etag"], '"synthetic-etag"')
+        self.assertEqual(len(self.requests), 5)
 
     def test_offline_uses_verified_cached_version(self):
         self.update()
@@ -433,7 +433,7 @@ class UpdateTests(unittest.TestCase):
             raise OSError("synthetic offline")
 
         result = self.update(offline)
-        self.assertEqual(result["version"], "1.2.0")
+        self.assertEqual(result["version"], "1.3.0")
         self.assertEqual(result["update_status"], "unavailable_using_local")
 
     def test_permission_expansion_keeps_original(self):
@@ -441,12 +441,12 @@ class UpdateTests(unittest.TestCase):
         result = self.update()
         self.assertEqual(result["update_status"], "permission_review_required")
         self.assertEqual(result["public_root"], str(ROOT))
-        self.assertEqual(len(self.requests), 1)
+        self.assertEqual(len(self.requests), 2)
 
     def test_incompatible_python_never_downloads_or_activates(self):
         self.manifest["python_min"] = "99.0"
         self.assertEqual(self.update()["update_status"], "unavailable_using_local")
-        self.assertEqual(len(self.requests), 1)
+        self.assertEqual(len(self.requests), 2)
         self.assertFalse((self.cache / "current.json").exists())
 
     def test_invalid_python_in_validly_hashed_archive_never_activates(self):
@@ -481,10 +481,10 @@ class UpdateTests(unittest.TestCase):
 
     def test_rollback_preserves_previous_verified_version(self):
         self.update()
-        self.archive = self.make_archive("1.3.0")
+        self.archive = self.make_archive("1.4.0")
         self.manifest.update(
-            version="1.3.0",
-            archive_url=f"https://github.com/{public_update.REPO}/releases/download/v1.3.0/lsnu-campus-assistant-1.3.0.zip",
+            version="1.4.0",
+            archive_url=f"https://github.com/{public_update.REPO}/releases/download/v1.4.0/lsnu-compus-skill-1.4.0.zip",
             archive_sha256=hashlib.sha256(self.archive).hexdigest(),
         )
         self.update()
@@ -493,7 +493,7 @@ class UpdateTests(unittest.TestCase):
             (public_update.current_root(self.cache, ROOT) / "VERSION")
             .read_text()
             .strip(),
-            "1.2.0",
+            "1.3.0",
         )
 
     def test_cached_tampering_is_detected(self):
@@ -526,7 +526,7 @@ class UpdateTests(unittest.TestCase):
     def test_untrusted_origins_credentials_and_redirects_rejected(self):
         for url in [
             "https://github.com.evil.test/a",
-            "https://user:pass@github.com/PeterRia/lsnu-campus-assistant/releases/download/x",
+            "https://user:pass@github.com/PeterRia/lsnu-compus-skill/releases/download/x",
             "http://github.com/x",
             "https://example.com/file.zip",
         ]:

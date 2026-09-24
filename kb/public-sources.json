@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "feeds": [
+    {"name": "教学部通知", "url": "https://jiaowc.lsnu.edu.cn/", "sections": ["1015", "1017", "1018", "1028"], "limit": 8},
+    {"name": "学生资助通知", "url": "https://xuesc.lsnu.edu.cn/", "sections": ["1035"], "limit": 8},
+    {"name": "图书馆通知", "url": "http://libnew.lsnu.edu.cn/", "sections": ["1004"], "limit": 8}
+  ],
+  "note": "仅采集这些官方入口中实际出现的通知链接，并复核 catalog.json 已列来源；不扫描全校站点或个人目录。"
+}

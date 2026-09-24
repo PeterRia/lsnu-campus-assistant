@@ -370,7 +370,7 @@ def calendar(result):
         for item in items:
             uid = (
                 hashlib.sha256((kind + ":" + item["id"]).encode()).hexdigest()[:32]
-                + "@lsnu-campus-assistant.local"
+                + "@lsnu-compus-skill.local"
             )
             lines += [
                 "BEGIN:" + kind,

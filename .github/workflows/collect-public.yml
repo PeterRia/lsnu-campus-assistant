@@ -1,0 +1,56 @@
+name: Collect public campus information
+on:
+  schedule:
+    - cron: '17 * * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: public-campus-information
+  cancel-in-progress: false
+jobs:
+  collect:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - name: Read current public snapshot branch
+        uses: actions/checkout@v4
+        with:
+          ref: public-knowledge
+          path: public-data
+      - name: Collect official notice metadata
+        run: >-
+          python scripts/collect_public.py
+          --previous public-data/latest.json
+          --output public-data/latest.json
+          --report "${{ runner.temp }}/collection-report.json"
+      - name: Publish the public snapshot
+        working-directory: public-data
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- latest.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'Refresh official campus information snapshot'
+            git push origin HEAD:public-knowledge
+          fi
+      - name: Keep collection statistics
+        uses: actions/upload-artifact@v4
+        with:
+          name: public-collection-${{ github.run_id }}
+          path: ${{ runner.temp }}/collection-report.json
+          retention-days: 14
+      - name: Report incomplete collection
+        run: |
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          r = json.loads((Path(os.environ['RUNNER_TEMP']) / 'collection-report.json').read_text())
+          print(json.dumps(r, ensure_ascii=False, indent=2))
+          if r['failed'] or r['failed_feeds']:
+              raise SystemExit('Some official sources failed; the published snapshot preserves their last successful timestamps.')
+          PY

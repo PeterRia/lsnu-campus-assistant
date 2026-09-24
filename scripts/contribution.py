@@ -9,7 +9,7 @@ import sys
 import urllib.parse
 import urllib.request
 
-REPO = "PeterRia/lsnu-campus-assistant"
+REPO = "PeterRia/lsnu-compus-skill"
 
 
 def api(method, route, token, body=None):

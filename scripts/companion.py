@@ -15,7 +15,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import isolation
 from memory import default_store, valid_store
 
-DEFAULT_CACHE = Path.home() / ".cache/lsnu-campus-assistant"
+DEFAULT_CACHE = Path.home() / ".cache/lsnu-compus-skill"
 NAME = "lsnu-personal-memory"
 PERSONAL_SKILL = """---
 name: lsnu-personal-memory

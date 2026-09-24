@@ -37,15 +37,15 @@ python3 scripts/campus.py check-sources --id retake-2026-autumn
 ## 打包
 
 ```bash
-python3 scripts/maintain.py package --output dist/lsnu-campus-assistant-1.1.0.zip
+python3 scripts/maintain.py package --output dist/lsnu-compus-skill-1.2.0.zip
 ```
 
-只打包明确允许的代码、知识和文档，附逐文件 SHA-256；不含 `.git`、研究原始资料、个人输出或环境。解压后选择内层 `lsnu-campus-assistant` 文件夹导入。
+只打包明确允许的代码、知识和文档，附逐文件 SHA-256；不含 `.git`、研究原始资料、个人输出或环境。解压后选择内层 `lsnu-compus-skill` 文件夹导入。
 
 允许文件逐项列在 `PUBLIC-FILES.json`；新增文件须有意加入，不能以整个目录通配代替。符号链接、路径越界或清单缺失会阻止打包。`release.json` 是固定可信上游的更新入口，不放进 ZIP，以避免自引用校验。
 
 ```bash
-python3 scripts/maintain.py release --output dist/v1.1.0 --manifest release.json
+python3 scripts/maintain.py release --output dist/v1.2.0 --manifest release.json
 ```
 
 发布时先上传对应 GitHub Release 的 ZIP 和 SHA256SUMS，再使主分支的 `release.json` 生效，避免清单指向尚不存在的包。ZIP 内容必须与已验证代码一致。GitHub 的 HTTPS 仓库身份是信任根；本版没有冒充额外的签名机制。

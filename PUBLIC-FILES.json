@@ -1,4 +1,5 @@
 [
+  ".github/workflows/collect-public.yml",
   ".github/workflows/verify.yml",
   ".gitignore",
   "CHANGELOG.md",
@@ -38,6 +39,7 @@
   "kb/cards/transcript-guide.md",
   "kb/cards/transfer-overview.md",
   "kb/catalog.json",
+  "kb/public-sources.json",
   "references/academic.md",
   "references/evidence-and-procedures.md",
   "references/life-and-growth.md",
@@ -45,7 +47,9 @@
   "references/personalization.md",
   "references/planning.md",
   "references/practice.md",
+  "references/public-information.md",
   "scripts/campus.py",
+  "scripts/collect_public.py",
   "scripts/companion.py",
   "scripts/contribution.py",
   "scripts/credits.py",
@@ -54,8 +58,10 @@
   "scripts/memory.py",
   "scripts/planner.py",
   "scripts/progress.py",
+  "scripts/public_knowledge.py",
   "scripts/public_update.py",
   "scripts/share.py",
   "tests/test_companion.py",
+  "tests/test_public_information.py",
   "tests/test_tools.py"
 ]

@@ -2,7 +2,7 @@
 
 ## 两个 Skill，通过当前 Agent 协作
 
-主 Skill `lsnu-campus-assistant` 维护公共校园知识与工具。个人 Skill `lsnu-personal-memory` 维护用户自己的偏好、知识、记忆和个人流程。二者通过当前 Agent 的技能加载与工具调用协作：**先更新公共知识 → 调用个人 Skill 召回相关记忆 → Agent 综合回答 → 有适当候选时邀请自愿贡献**。
+主 Skill `lsnu-compus-skill` 维护公共校园知识与工具。个人 Skill `lsnu-personal-memory` 维护用户自己的偏好、知识、记忆和个人流程。二者通过当前 Agent 的技能加载与工具调用协作：**先更新公共知识 → 调用个人 Skill 召回相关记忆 → Agent 综合回答 → 有适当候选时邀请自愿贡献**。
 
 没有独立网页、独立聊天系统或常驻后台。用户始终在安装这些 Skill 的 Agent 中操作。个人技能以 `workflow` 记录保存经用户确认的可复用方法，例如“先核对适用条件，再列截止与行动清单”，由当前 Agent 在任务授权内使用。
 
@@ -75,7 +75,7 @@ python3 "<公共Skill实际安装目录>/scripts/companion.py" start
 
 1. `identity` 核对用户已登录的 GitHub 身份；该步骤不发送草稿正文。
 2. `draft` 输入最小化标题、正文、已核对的身份及分享权确认。生成本地草稿。
-3. `preview` 展示完整标题、正文及防重复标记、接收仓库 `PeterRia/lsnu-campus-assistant`、公开范围、实际身份和待审核 issue 类型。
+3. `preview` 展示完整标题、正文及防重复标记、接收仓库 `PeterRia/lsnu-compus-skill`、公开范围、实际身份和待审核 issue 类型。
 4. 用户针对本次预览明确同意后，`decide` 使用 decision=approve、匹配 digest、consent=true 和真实授权说明；授权有效期 30 分钟。拒绝用 decision=decline。
 5. `submit` 仅发送批准的标题和正文，不附带整段聊天、整个记忆库或原始材料。内容、目的地或身份变化须重新预览与批准。
 
