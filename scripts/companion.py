@@ -13,7 +13,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import isolation
-from memory import DEFAULT_STORE, valid_store
+from memory import default_store, valid_store
 
 DEFAULT_CACHE = Path.home() / ".cache/lsnu-campus-assistant"
 NAME = "lsnu-personal-memory"
@@ -195,7 +195,7 @@ def main():
     p.add_argument(
         "--installed", type=Path, default=Path(__file__).resolve().parents[1]
     )
-    p.add_argument("--state", type=Path, default=DEFAULT_STORE)
+    p.add_argument("--state", type=Path, default=default_store())
     p.add_argument("--cache", type=Path, default=DEFAULT_CACHE)
     p.add_argument("--personal-skill-dir", type=Path)
     a = p.parse_args()

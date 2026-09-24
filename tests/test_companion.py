@@ -640,8 +640,9 @@ class IsolationTests(unittest.TestCase):
                     input=json.dumps(request),
                     text=True,
                     capture_output=True,
-                    check=True,
+                    check=False,
                 )
+                self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
                 return json.loads(p.stdout)
 
             recall = {

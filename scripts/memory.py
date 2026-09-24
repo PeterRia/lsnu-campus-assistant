@@ -16,15 +16,18 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import isolation
 
-DEFAULT_STORE = Path.home() / ".local/share/lsnu-personal-memory"
 LOCAL_CONFIG = Path(__file__).resolve().parents[1] / "local-config.json"
 KINDS = {"preference", "knowledge", "workflow"}
+
+
+def default_store():
+    return Path.home() / ".local/share/lsnu-personal-memory"
 
 
 def configured_store():
     if LOCAL_CONFIG.is_file():
         return Path(json.loads(LOCAL_CONFIG.read_text())["store"])
-    return DEFAULT_STORE
+    return default_store()
 
 
 def now():
