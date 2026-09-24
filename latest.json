@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "skill_id": "lsnu-compus-skill",
+  "skill_id": "lsnu-campus-skill",
   "collected_at": "2026-09-24T06:11:32.062326+00:00",
   "content_revision": "b672ebfa55a821d30c0b023ccd809fc3cc4239f69853aa84f26e2302a889d9d5",
   "feeds": [
@@ -686,5 +686,5 @@
     "changed": 0
   },
   "scope": "自动观察公开通知标题、发布日期、来源与正文指纹，不复制全文、不自动改写已审核知识卡，不代表政策有效性或人工核查。",
-  "snapshot_sha256": "ddf3656257696b3619a3948743260f4e569ae888f5e79bf05b90179dc75e088c"
+  "snapshot_sha256": "90d648a8b655cbc9101868dfbbb8c34ff638c37ce1ba8adf3a8e25c9380f7acf"
 }
