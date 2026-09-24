@@ -8,9 +8,11 @@ private/
 vault/
 *.sqlite3
 *.sqlite3-*
-workbench-session.json
-runtime-manifest.json
-public-source.json
+local-config.json
+COMPANION.json
+policy.json
+audit.jsonl
+personal-memory/
 outputs/
 *.ics
 *.log
