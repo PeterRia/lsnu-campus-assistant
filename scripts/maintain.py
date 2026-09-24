@@ -6,41 +6,27 @@ import hashlib
 import json
 import re
 import sys
+import tempfile
 import zipfile
 from pathlib import Path
 
 from campus import ROOT, card_text, digest, doctor, load_catalog
 
-TOP_FILES = {
-    "SKILL.md",
-    "README.md",
-    "LICENSE",
-    "NOTICE.md",
-    "CONTRIBUTING.md",
-    "CHANGELOG.md",
-    ".gitignore",
-}
-FOLDERS = {
-    "agents",
-    "scripts",
-    "references",
-    "kb",
-    "docs",
-    "examples",
-    "tests",
-    ".github",
-}
-
 
 def files():
-    for path in sorted(ROOT.rglob("*")):
-        rel = path.relative_to(ROOT)
-        if not path.is_file() or path.is_symlink() or "__pycache__" in rel.parts:
-            continue
-        if (
-            (len(rel.parts) == 1 and rel.name in TOP_FILES) or rel.parts[0] in FOLDERS
-        ) and path.suffix not in {".pyc", ".log"}:
-            yield path
+    from public_update import safe_relative
+
+    allowed = json.loads((ROOT / "PUBLIC-FILES.json").read_text(encoding="utf-8"))
+    if not isinstance(allowed, list) or len(allowed) != len(set(allowed)):
+        raise ValueError("公共文件允许清单无效")
+    for name in sorted(allowed):
+        rel = safe_relative(name)
+        path = ROOT / str(rel)
+        if any((ROOT / str(parent)).is_symlink() for parent in [rel, *rel.parents]):
+            raise ValueError("公共文件路径不能经过符号链接")
+        if not path.resolve().is_relative_to(ROOT.resolve()) or not path.is_file():
+            raise ValueError("允许清单中的文件缺失或越界: " + name)
+        yield path
 
 
 def check_links():
@@ -65,7 +51,11 @@ def package(output):
         raise ValueError("; ".join(errors))
     dest.parent.mkdir(parents=True, exist_ok=True)
     hashes = {}
-    with zipfile.ZipFile(dest, "w", zipfile.ZIP_DEFLATED) as z:
+    with tempfile.NamedTemporaryFile(
+        dir=dest.parent, suffix=".zip", delete=False
+    ) as tmp:
+        pending = Path(tmp.name)
+    with zipfile.ZipFile(pending, "w", zipfile.ZIP_DEFLATED) as z:
         for path in files():
             data = path.read_bytes()
             rel = path.relative_to(ROOT).as_posix()
@@ -86,12 +76,37 @@ def package(output):
             info,
             json.dumps(hashes, ensure_ascii=False, indent=2) + "\n",
         )
+    pending.replace(dest)
     return {
         "status": "ok",
         "zip": str(dest),
         "files": len(hashes),
         "sha256": hashlib.sha256(dest.read_bytes()).hexdigest(),
     }
+
+
+def release(output, manifest_path):
+    from public_update import PERMISSIONS, REPO, version
+
+    value = (ROOT / "VERSION").read_text().strip()
+    version(value)
+    result = package(Path(output) / f"lsnu-campus-assistant-{value}.zip")
+    manifest = {
+        "schema_version": 1,
+        "skill_id": "lsnu-campus-assistant",
+        "version": value,
+        "python_min": "3.10",
+        "permissions": PERMISSIONS,
+        "archive_url": f"https://github.com/{REPO}/releases/download/v{value}/lsnu-campus-assistant-{value}.zip",
+        "archive_sha256": result["sha256"],
+    }
+    Path(manifest_path).write_text(
+        json.dumps(manifest, indent=2) + "\n", encoding="utf-8"
+    )
+    (Path(output) / "SHA256SUMS.txt").write_text(
+        result["sha256"] + "  " + Path(result["zip"]).name + "\n"
+    )
+    return {**result, "manifest": str(manifest_path), "version": value}
 
 
 def main():
@@ -101,6 +116,9 @@ def main():
     s.add_parser("check")
     z = s.add_parser("package")
     z.add_argument("--output", required=True)
+    r = s.add_parser("release")
+    r.add_argument("--output", required=True)
+    r.add_argument("--manifest", required=True)
     a = p.parse_args()
     try:
         if a.cmd == "refresh-hashes":
@@ -118,6 +136,8 @@ def main():
             result = doctor()
             result["errors"] += check_links()
             result["status"] = "error" if result["errors"] else "ok"
+        elif a.cmd == "release":
+            result = release(a.output, a.manifest)
         else:
             result = package(a.output)
         print(json.dumps(result, ensure_ascii=False, indent=2))

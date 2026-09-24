@@ -5,6 +5,12 @@ __pycache__/
 .cache/
 dist/
 private/
+vault/
+*.sqlite3
+*.sqlite3-*
+workbench-session.json
+runtime-manifest.json
+public-source.json
 outputs/
 *.ics
 *.log
