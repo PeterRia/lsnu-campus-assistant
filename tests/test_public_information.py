@@ -6,8 +6,10 @@ import json
 import sys
 import tempfile
 import unittest
+import urllib.error
 from datetime import datetime
 from pathlib import Path
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
@@ -65,6 +67,7 @@ class CollectionTests(unittest.TestCase):
         self.assertEqual(self.snapshot(changed, SECOND)["stats"]["changed"], 1)
 
     def test_failed_refresh_preserves_last_success_and_content(self):
+        self.pages[NOTICE]["title"] += "-乐山师范学院图书馆"
         first = self.snapshot()
 
         def offline(url):
@@ -73,6 +76,7 @@ class CollectionTests(unittest.TestCase):
         failed = self.snapshot(first, SECOND, offline)
         self.assertEqual(failed["items"][0]["last_success_at"], FIRST)
         self.assertEqual(failed["items"][0]["content_sha256"], "a" * 64)
+        self.assertEqual(first["content_revision"], failed["content_revision"])
         self.assertEqual(failed["feeds"][0]["last_success_at"], FIRST)
         self.assertEqual(
             knowledge.summary(failed, datetime.fromisoformat(SECOND))["freshness"],
@@ -92,6 +96,30 @@ class CollectionTests(unittest.TestCase):
         self.assertEqual(result["feeds"][0]["error"], "NoUsableNoticeLinks")
         self.assertEqual(result["feeds"][0]["last_success_at"], FIRST)
         self.assertEqual(result["items"][0]["url"], NOTICE)
+
+    def test_transport_retry_is_bounded_and_does_not_retry_invalid_content(self):
+        transient = urllib.error.URLError(TimeoutError())
+        with (
+            patch.object(
+                collector, "_fetch_page", side_effect=[transient, self.pages[NOTICE]]
+            ) as fetch,
+            patch.object(collector.time, "sleep"),
+        ):
+            self.assertEqual(collector.fetch_page(NOTICE), self.pages[NOTICE])
+            self.assertEqual(fetch.call_count, 2)
+        with (
+            patch.object(collector, "_fetch_page", side_effect=transient) as fetch,
+            patch.object(collector.time, "sleep"),
+        ):
+            with self.assertRaises(urllib.error.URLError):
+                collector.fetch_page(NOTICE)
+            self.assertEqual(fetch.call_count, 2)
+        with patch.object(
+            collector, "_fetch_page", side_effect=ValueError("untrusted")
+        ) as fetch:
+            with self.assertRaises(ValueError):
+                collector.fetch_page(NOTICE)
+            self.assertEqual(fetch.call_count, 1)
 
     def test_source_scope_and_redirect_are_enforced(self):
         self.pages[FEED]["links"] += [

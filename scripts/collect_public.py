@@ -8,6 +8,8 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import time
+import urllib.error
 import urllib.parse
 import urllib.request
 from concurrent.futures import ThreadPoolExecutor
@@ -50,6 +52,20 @@ class Metadata(HTMLParser):
 
 
 def fetch_page(url):
+    # One retry for transient transport errors, never for parsing or origin errors.
+    for attempt in range(2):
+        try:
+            return _fetch_page(url)
+        except urllib.error.HTTPError as exc:
+            if attempt or exc.code not in {429, 500, 502, 503, 504}:
+                raise
+        except (urllib.error.URLError, TimeoutError, ConnectionError):
+            if attempt:
+                raise
+        time.sleep(1)
+
+
+def _fetch_page(url):
     if not official_url(url):
         raise ValueError("只允许明确的乐师官方来源")
     opener = urllib.request.build_opener(
@@ -58,7 +74,7 @@ def fetch_page(url):
     request = urllib.request.Request(
         url, headers={"User-Agent": "lsnu-compus-skill/1.2 public-notice-monitor"}
     )
-    with opener.open(request, timeout=12) as response:
+    with opener.open(request, timeout=20) as response:
         content = response.read(2_000_001)
         if len(content) > 2_000_000 or "html" not in response.headers.get(
             "Content-Type", ""
@@ -130,7 +146,12 @@ def collect(cards, feeds, previous=None, fetch=fetch_page, collected_at=None):
         try:
             return fetch(url), None
         except (OSError, ValueError, LookupError) as exc:
-            return None, type(exc).__name__
+            detail = type(exc).__name__
+            if isinstance(exc, urllib.error.HTTPError):
+                detail += ":" + str(exc.code)
+            elif isinstance(exc, urllib.error.URLError):
+                detail += ":" + type(exc.reason).__name__
+            return None, detail
 
     observations = []
     with ThreadPoolExecutor(max_workers=3) as pool:
@@ -214,7 +235,9 @@ def collect(cards, feeds, previous=None, fetch=fetch_page, collected_at=None):
         else:
             # An attempted fetch must not refresh a failed source's success time.
             row.update(
-                last_success_at=old.get("last_success_at"), change="not_verified"
+                title=old.get("title") or target["title"],
+                last_success_at=old.get("last_success_at"),
+                change="not_verified",
             )
             row.setdefault("published_on", None)
             row.setdefault("content_sha256", None)
