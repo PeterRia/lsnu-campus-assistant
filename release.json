@@ -1,12 +1,12 @@
 {
   "schema_version": 1,
-  "skill_id": "lsnu-compus-skill",
-  "version": "1.2.0",
+  "skill_id": "lsnu-campus-skill",
+  "version": "1.2.1",
   "python_min": "3.10",
   "permissions": [
     "public-network",
     "public-cache-write"
   ],
-  "archive_url": "https://github.com/PeterRia/lsnu-compus-skill/releases/download/v1.2.0/lsnu-compus-skill-1.2.0.zip",
-  "archive_sha256": "f9f36872ce089474045a4c4598dd55a0f0b8fa4c257050c30ae7a332f3e8a5f3"
+  "archive_url": "https://github.com/PeterRia/lsnu-campus-skill/releases/download/v1.2.1/lsnu-campus-skill-1.2.1.zip",
+  "archive_sha256": "68072f1447e764bc80b1bfc9391afcad6bd1a32ccedbced7330767c9956ce145"
 }

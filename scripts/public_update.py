@@ -21,8 +21,8 @@ from pathlib import Path, PurePosixPath
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import public_knowledge
 
-SKILL = "lsnu-compus-skill"
-REPO = "PeterRia/lsnu-compus-skill"
+SKILL = "lsnu-campus-skill"
+REPO = "PeterRia/lsnu-campus-skill"
 MANIFEST_URL = f"https://raw.githubusercontent.com/{REPO}/main/release.json"
 PERMISSIONS = ["public-network", "public-cache-write"]
 MAX_ARCHIVE = 12 * 1024 * 1024
@@ -96,7 +96,7 @@ class TrustedRedirect(urllib.request.HTTPRedirectHandler):
 def download(url, limit, *, manifest=False, etag=None):
     check_url(url, manifest=manifest)
     headers = {
-        "User-Agent": "lsnu-compus-skill-updater/1",
+        "User-Agent": "lsnu-campus-skill-updater/1",
         "Accept": "application/json" if manifest else "application/octet-stream",
     }
     if etag:

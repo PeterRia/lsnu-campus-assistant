@@ -228,7 +228,7 @@ class BootstrapTests(unittest.TestCase):
         parent = Path("/tmp/synthetic-agent/skills/custom")
         self.assertEqual(
             companion.skill_destination(
-                parent / "lsnu-compus-skill", Path("/tmp/data")
+                parent / "lsnu-campus-skill", Path("/tmp/data")
             ),
             (parent / "lsnu-personal-memory").resolve(),
         )
@@ -380,7 +380,7 @@ class UpdateTests(unittest.TestCase):
             "version": "1.3.0",
             "python_min": "3.10",
             "permissions": public_update.PERMISSIONS,
-            "archive_url": f"https://github.com/{public_update.REPO}/releases/download/v1.3.0/lsnu-compus-skill-1.3.0.zip",
+            "archive_url": f"https://github.com/{public_update.REPO}/releases/download/v1.3.0/lsnu-campus-skill-1.3.0.zip",
             "archive_sha256": hashlib.sha256(self.archive).hexdigest(),
         }
         self.requests = []
@@ -484,7 +484,7 @@ class UpdateTests(unittest.TestCase):
         self.archive = self.make_archive("1.4.0")
         self.manifest.update(
             version="1.4.0",
-            archive_url=f"https://github.com/{public_update.REPO}/releases/download/v1.4.0/lsnu-compus-skill-1.4.0.zip",
+            archive_url=f"https://github.com/{public_update.REPO}/releases/download/v1.4.0/lsnu-campus-skill-1.4.0.zip",
             archive_sha256=hashlib.sha256(self.archive).hexdigest(),
         )
         self.update()
@@ -526,7 +526,7 @@ class UpdateTests(unittest.TestCase):
     def test_untrusted_origins_credentials_and_redirects_rejected(self):
         for url in [
             "https://github.com.evil.test/a",
-            "https://user:pass@github.com/PeterRia/lsnu-compus-skill/releases/download/x",
+            "https://user:pass@github.com/PeterRia/lsnu-campus-skill/releases/download/x",
             "http://github.com/x",
             "https://example.com/file.zip",
         ]:

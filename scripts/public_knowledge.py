@@ -11,8 +11,8 @@ from pathlib import Path
 
 from campus import official_url, tokenize
 
-SKILL = "lsnu-compus-skill"
-SNAPSHOT_URL = "https://raw.githubusercontent.com/PeterRia/lsnu-compus-skill/public-knowledge/latest.json"
+SKILL = "lsnu-campus-skill"
+SNAPSHOT_URL = "https://raw.githubusercontent.com/PeterRia/lsnu-campus-skill/public-knowledge/latest.json"
 MAX_BYTES = 2 * 1024 * 1024
 MAX_AGE = timedelta(hours=3)
 

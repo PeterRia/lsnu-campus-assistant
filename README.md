@@ -1,6 +1,6 @@
-# lsnu-compus-skill
+# lsnu-campus-skill
 
-项目名固定为 **lsnu-compus-skill**，包括此处的 `compus` 拼写；后续维护不得自行更名。中文功能说明为乐山师范学院校园助手。
+项目名固定为 **lsnu-campus-skill**，使用正确的 `campus` 拼写；后续维护不得未经用户要求自行更名。中文功能说明为乐山师范学院校园助手。
 
 把乐山师范学院的校园问题变成**有出处、能执行的下一步**。面向 Marvis，也可由支持文件夹 Skill 的其他助手加载。
 

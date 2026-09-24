@@ -225,7 +225,7 @@ def check_source(card, timeout=15):
         req = urllib.request.Request(
             url,
             headers={
-                "User-Agent": "lsnu-compus-skill/1.2 (public source verification)"
+                "User-Agent": "lsnu-campus-skill/1.2 (public source verification)"
             },
         )
         with urllib.request.build_opener(OfficialRedirect()).open(

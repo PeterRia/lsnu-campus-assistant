@@ -72,7 +72,7 @@ def _fetch_page(url):
         urllib.request.ProxyHandler({}), OfficialRedirect()
     )
     request = urllib.request.Request(
-        url, headers={"User-Agent": "lsnu-compus-skill/1.2 public-notice-monitor"}
+        url, headers={"User-Agent": "lsnu-campus-skill/1.2 public-notice-monitor"}
     )
     with opener.open(request, timeout=20) as response:
         content = response.read(2_000_001)

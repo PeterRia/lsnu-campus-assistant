@@ -192,13 +192,14 @@ class CollectionTests(unittest.TestCase):
             self.assertEqual(result["hits"][0]["freshness"], "stale_or_failed")
 
     def test_code_unchanged_still_downloads_new_public_information(self):
+        current_version = (ROOT / "VERSION").read_text().strip()
         manifest = {
             "schema_version": 1,
             "skill_id": knowledge.SKILL,
-            "version": (ROOT / "VERSION").read_text().strip(),
+            "version": current_version,
             "python_min": "3.10",
             "permissions": public_update.PERMISSIONS,
-            "archive_url": "https://github.com/PeterRia/lsnu-compus-skill/releases/download/v1.2.0/lsnu-compus-skill-1.2.0.zip",
+            "archive_url": f"https://github.com/{public_update.REPO}/releases/download/v{current_version}/{public_update.SKILL}-{current_version}.zip",
             "archive_sha256": "a" * 64,
         }
         snapshot = self.snapshot()
